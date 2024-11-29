@@ -4,3 +4,5 @@ fmriprep/docker-logs/
 fmriprep/dispatch-logs/
 # fmriprep output
 fmriprep/output/
+# convert output
+convert/output/
