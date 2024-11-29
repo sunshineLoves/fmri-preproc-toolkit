@@ -79,19 +79,19 @@ def convert_fMRIvols_to_atlas(fmri_pattern, output_path, atlas_file):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--fmri_pattern",
+        "--fmri-pattern",
         type=str,
         required=True,
         help="Pattern to search for fMRI files in the data directory",
     )
     parser.add_argument(
-        "--output_path",
+        "--output-path",
         type=str,
         required=True,
         help="Path to save the output parcellated time series",
     )
     parser.add_argument(
-        "--atlas_file", type=str, required=True, help="Path to the atlas file"
+        "--atlas-file", type=str, required=True, help="Path to the atlas file"
     )
     args = parser.parse_args()
     convert_fMRIvols_to_atlas(args.fmri_pattern, args.output_path, args.atlas_file)
