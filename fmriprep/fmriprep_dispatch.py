@@ -5,106 +5,6 @@ from threading import Thread, Lock
 from datetime import datetime
 import argparse
 
-# print_lock = Lock()
-# file_lock = Lock()
-
-# script_dir = os.path.dirname(os.path.abspath(__file__))
-# timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-# dispatch_log_dir = os.path.join(
-#     script_dir, "dispatch-logs", f"dispatch_{timestamp}.log"
-# )
-
-
-# def log_message(message):
-#     """打印带有时间戳的日志信息"""
-#     log = f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {message}"
-#     with print_lock:
-#         print(log)
-#     # 同时将日志信息写入文件
-#     with file_lock:
-#         with open(dispatch_log_dir, "a") as f:
-#             f.write(log + "\n")
-
-
-# def wait_container(container_id, docker_log_path):
-#     """启动容器并传递数据路径作为环境变量"""
-#     log_message(f"等待容器退出...")
-#     exit_code = (
-#         subprocess.check_output(["docker", "wait", container_id]).decode().strip()
-#     )
-#     log_message(f"容器退出码为 {exit_code}，日志记录到 {docker_log_path}")
-#     with open(docker_log_path, "w") as f:
-#         subprocess.run(["docker", "logs", "-t", container_id], stdout=f, stderr=f)
-#     log_message("删除容器")
-#     subprocess.check_call(
-#         ["docker", "rm", container_id],
-#         stdout=subprocess.DEVNULL,
-#         stderr=subprocess.DEVNULL,
-#     )
-
-
-# # 配置参数
-# MAX_CONTAINERS = 5  # 最大并发容器数量
-# ADNI_DATASET = "E:\\datasets\\ADNI\\BIDS"
-# WORKSPACE = "C:\\Users\\admin\\Desktop\\workspace"
-# FMRIPREP_OUTPUT = os.path.join(WORKSPACE, "fmriprep", "output")
-# LICENSE_FILE = os.path.join(WORKSPACE, "fmriprep", "license.txt")
-# DOCKER_LOG_PATH = os.path.join(WORKSPACE, "fmriprep", "docker-logs")
-# subject_ids = [
-#     "002S4219",
-#     "002S4270",
-#     "006S4150",
-#     "006S4153",
-# ]
-# for subject_id in subject_ids:
-#     docker_log_path = os.path.join(DOCKER_LOG_PATH, f"fmriprep_{subject_id}.log")
-
-#     command = [
-#         "docker",
-#         "run",
-#         "-d",
-#         "-v",
-#         f"{ADNI_DATASET}:/data",
-#         "-v",
-#         f"{FMRIPREP_OUTPUT}:/out",
-#         "-v",
-#         f"{LICENSE_FILE}:/opt/freesurfer/license.txt",
-#         "nipreps/fmriprep:latest",
-#         "/data",
-#         "/out",
-#         "participant",
-#         "--output-spaces",
-#         "MNI152NLin2009cAsym:res-1",
-#         "MNI152NLin6Asym:res-1",
-#         "--participant_label",
-#         subject_id,
-#         "--ignore",
-#         "fieldmaps",
-#     ]
-
-#     """监控容器数量并启动新容器"""
-#     while True:
-#         # 获取当前运行的容器数量
-#         running_containers = int(
-#             subprocess.check_output(["docker", "ps", "-q"]).decode().count("\n")
-#         )
-
-#         # 如果容器数量少于最大容器数，则启动新的容器
-#         if running_containers < MAX_CONTAINERS:
-#             # 启动容器
-#             log_message(f"启动新容器，处理 Subject ID: {subject_id}")
-#             container_id = subprocess.check_output(command).decode().strip()
-#             Thread(
-#                 target=wait_container,
-#                 args=(container_id, docker_log_path),
-#             ).start()
-#             break
-
-#         # 定期检查
-#         log_message(f"当前正在运行的容器数量: {running_containers}")
-#         time.sleep(60 * 30)  # 可调节时间间隔，平衡系统负载与实时性
-# log_message("处理完成")
-
 
 def dispatch_fmriprep_container(
     bids_dataset_path,
@@ -322,12 +222,12 @@ def validate_args(args):
             os.path.join(fmriprep_output_path, f"sub-{subject_id}")
         )
         assert not os.path.exists(
-            os.path.join(docker_log_path, f"fmriprep_{subject_id}.log")
-        )
-        assert not os.path.exists(
             os.path.join(
                 fmriprep_output_path, "sourcedata", "freesurfer", f"sub-{subject_id}"
             )
+        )
+        assert not os.path.exists(
+            os.path.join(docker_log_path, f"fmriprep_{subject_id}.log")
         )
 
     args.docker_log_path = docker_log_path
