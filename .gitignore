@@ -1,0 +1,6 @@
+# docker logs
+fmriprep/docker-logs/
+# dispatch logs
+fmriprep/dispath-logs/
+# fmriprep output
+fmriprep/output/
