@@ -190,16 +190,18 @@ def validate_args(args):
 
     os.makedirs(docker_log_path, exist_ok=True)
     os.makedirs(dispatch_log_path, exist_ok=True)
-    assert os.path.isfile(license_file)
-    assert os.path.isdir(bids_dataset_path)
+    assert os.path.isfile(license_file), "License file not found."
+    assert os.path.isdir(bids_dataset_path), "BIDS dataset not found."
     assert not os.path.exists(fmriprep_output_path) or os.path.isdir(
         fmriprep_output_path
-    )
+    ), "fmriprep output path is not a directory."
 
     subject_list = []
     if args.subject_list:
         for subject_id in args.subject_list:
-            assert os.path.isdir(os.path.join(bids_dataset_path, f"sub-{subject_id}"))
+            assert os.path.isdir(
+                os.path.join(bids_dataset_path, f"sub-{subject_id}")
+            ), f"Subject {subject_id} not found."
         subject_list = args.subject_list
     elif args.subject_range:
         subject_paths = sorted(os.listdir(bids_dataset_path))
@@ -207,7 +209,7 @@ def validate_args(args):
         start, end = args.subject_range
         start_i = subject_ids.index(start)
         end_i = subject_ids.index(end)
-        assert start_i < end_i and start_i >= 0 and end_i >= 0
+        assert start_i < end_i and start_i >= 0 and end_i >= 0, "Invalid subject range."
         subject_list = subject_ids[start_i : end_i + 1]
     elif args.subject_file:
         with open(args.subject_file, "r") as f:
@@ -215,20 +217,20 @@ def validate_args(args):
                 subject_id = line.strip()
                 assert os.path.isdir(
                     os.path.join(bids_dataset_path, f"sub-{subject_id}")
-                )
+                ), f"Subject {subject_id} not found."
                 subject_list.append(subject_id)
     for subject_id in subject_list:
         assert not os.path.exists(
             os.path.join(fmriprep_output_path, f"sub-{subject_id}")
-        )
+        ), f"Output directory of Subject {subject_id} already exists."
         assert not os.path.exists(
             os.path.join(
                 fmriprep_output_path, "sourcedata", "freesurfer", f"sub-{subject_id}"
             )
-        )
+        ), f"Output directory of Subject {subject_id}'s sourcedata already exists."
         assert not os.path.exists(
             os.path.join(docker_log_path, f"fmriprep_{subject_id}.log")
-        )
+        ), f"Log file of Subject {subject_id} already exists."
 
     args.docker_log_path = docker_log_path
     args.dispatch_log_path = dispatch_log_path
