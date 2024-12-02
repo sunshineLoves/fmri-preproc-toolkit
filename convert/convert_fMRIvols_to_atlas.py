@@ -71,7 +71,7 @@ def convert_fMRIvols_to_atlas(fmri_pattern, output_path, atlas_file):
                 print(
                     f"Saving file {fn} with shape {extended_pmTS.shape} (TRs, parcels)"
                 )
-                np.savetxt(fn, extended_pmTS)
+                np.savetxt(fn, extended_pmTS, delimiter="\t")
 
             except:
                 print(f"Error with parcel Extraction for {file_name}")
