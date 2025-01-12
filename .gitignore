@@ -6,3 +6,11 @@ fmriprep/dispatch-logs/
 fmriprep/output/
 # convert output
 convert/output/
+# docker logs
+xcp_d/docker-logs/
+# dispatch logs
+xcp_d/dispatch-logs/
+# xcp_d output
+xcp_d/output/
+# connectome output
+connectome/output/
