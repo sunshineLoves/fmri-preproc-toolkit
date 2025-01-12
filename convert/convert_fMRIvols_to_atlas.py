@@ -15,6 +15,7 @@ def convert_fMRIvols_to_atlas(fmri_pattern, output_path, atlas_file):
     print("Atlas file:", atlas_file)
     try:
         label_img = nib.load(atlas_file)
+        atlas_shape = label_img.shape
         label = label_img.get_fdata()
         label = label.flatten()
         unique_labels = np.unique(label)
@@ -39,6 +40,8 @@ def convert_fMRIvols_to_atlas(fmri_pattern, output_path, atlas_file):
 
             try:
                 dts_img = nib.load(fmri_file)
+                dts_shape = dts_img.shape
+                assert dts_shape[:-1] == atlas_shape, "fMRI and Atlas shape mismatch"
                 dts = dts_img.get_fdata()
                 print("Loaded fMRI data")
             except Exception as e:
@@ -61,17 +64,11 @@ def convert_fMRIvols_to_atlas(fmri_pattern, output_path, atlas_file):
 
                 # Replace NaNs with 0
                 pmTS[np.isnan(pmTS)] = 0
-                # extend the last column to extra 20 columns
-                last_column = pmTS[-1, :].reshape(1, -1)
-                extra_columns = np.repeat(last_column, 20, axis=0)
-                extended_pmTS = np.vstack((pmTS, extra_columns))
                 # Save Time Series
                 save_name = file_name.split(".nii.gz")[0]
                 fn = os.path.join(output_path, f"{save_name}.dat")
-                print(
-                    f"Saving file {fn} with shape {extended_pmTS.shape} (TRs, parcels)"
-                )
-                np.savetxt(fn, extended_pmTS, delimiter="\t")
+                print(f"Saving file {fn} with shape {pmTS.shape} (TRs, parcels)")
+                np.savetxt(fn, pmTS, delimiter="\t")
 
             except:
                 print(f"Error with parcel Extraction for {file_name}")
