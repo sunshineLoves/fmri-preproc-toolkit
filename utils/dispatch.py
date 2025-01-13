@@ -7,12 +7,12 @@ from typing import List, Dict, Callable
 
 
 def dispatch_container(
+    image_name: str,
     dispatch_log_path: str,
     docker_log_path: str,
     max_containers: int,
     interval: int,
     configs: List[Dict[str, str]],
-    image_name: str,
     config_builder: Callable[[Dict[str, str]], Dict[str, str]],
 ):
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
