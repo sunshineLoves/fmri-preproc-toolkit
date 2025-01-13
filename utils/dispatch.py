@@ -13,7 +13,7 @@ def dispatch_container(
     max_containers: int,
     interval: int,
     configs: List[Dict[str, str]],
-    config_builder: Callable[[Dict[str, str]], Dict[str, str]],
+    docker_config_builder: Callable[[Dict[str, str]], Dict[str, str]],
 ):
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     filtered_name = image_name.replace("/", "-").replace(":", "-")
@@ -61,7 +61,7 @@ def dispatch_container(
         log(f"容器 {container_id} 删除成功")
 
     for config in configs:
-        docker_config = config_builder(config)
+        docker_config = docker_config_builder(config)
         docker_log_file = os.path.join(
             docker_log_path, docker_config["docker_log_file"]
         )
