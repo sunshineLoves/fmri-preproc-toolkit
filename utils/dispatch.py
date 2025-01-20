@@ -88,7 +88,7 @@ def dispatch_container(
                 log(f"容器参数 : {" ".join(container_args)}")
                 container_id = subprocess.check_output(command).decode().strip()
                 log(f"启动成功，容器 ID: {container_id}")
-                log(docker_config["msg_before_start"])
+                log(docker_config["msg_after_start"])
                 Thread(
                     target=wait_container,
                     args=(container_id, docker_log_file),
