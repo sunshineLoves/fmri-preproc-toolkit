@@ -266,7 +266,7 @@ def validate_args(args):
     args.subject_list = subject_list
 
 
-def main():
+def xcp_d_main():
     parser = get_parser()
     args = parser.parse_args()
     validate_args(args)
@@ -285,4 +285,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    xcp_d_main()
