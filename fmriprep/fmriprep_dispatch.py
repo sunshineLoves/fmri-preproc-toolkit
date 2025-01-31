@@ -126,9 +126,9 @@ def validate_args(args):
     args.subject_list = subject_list
 
 
-def fmriprep_main():
+def fmriprep_main(argv=None):
     parser = get_parser()
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     validate_args(args)
     print(args)
 

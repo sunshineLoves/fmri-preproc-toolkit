@@ -81,9 +81,9 @@ def get_binds_dict(adni_raw_path, prefix, image_ids):
     return dict(zip(map(find_image_path, image_ids), map(get_bind_path, image_ids)))
 
 
-def heudiconv_main():
+def heudiconv_main(argv=None):
     parser = get_parser()
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     validate_args(args)
     print(args)
 

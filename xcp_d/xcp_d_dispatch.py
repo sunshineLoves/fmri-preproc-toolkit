@@ -266,9 +266,9 @@ def validate_args(args):
     args.subject_list = subject_list
 
 
-def xcp_d_main():
+def xcp_d_main(argv=None):
     parser = get_parser()
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     validate_args(args)
     print(args)
 
