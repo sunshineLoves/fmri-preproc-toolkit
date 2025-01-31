@@ -1,8 +1,4 @@
 import os
-import sys
-
-sys.path.append("E:\\program\\ai4science\\fmri-preproc-toolkit")
-
 import ast
 import argparse
 from glob import glob
@@ -85,7 +81,7 @@ def get_binds_dict(adni_raw_path, prefix, image_ids):
     return dict(zip(map(find_image_path, image_ids), map(get_bind_path, image_ids)))
 
 
-def main_heudiconv():
+def heudiconv_main():
     parser = get_parser()
     args = parser.parse_args()
     validate_args(args)
