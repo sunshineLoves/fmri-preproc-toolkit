@@ -157,8 +157,6 @@ def fmriprep_main(argv=None):
                 "20",
                 "--random-seed",
                 "0",
-                "--fd-spike-threshold",
-                "0.5",
                 "--ignore",
                 "fieldmaps",
                 "--skull-strip-fixed-seed",
