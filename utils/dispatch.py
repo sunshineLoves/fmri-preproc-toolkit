@@ -16,10 +16,13 @@ def dispatch_container(
     docker_config_builder: Callable[[Dict[str, str]], Dict[str, str]],
 ):
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    docker_log_path = os.path.join(docker_log_path, timestamp)
     filtered_name = image_name.replace("/", "-").replace(":", "-")
     dispatch_log_file = os.path.join(
         dispatch_log_path, f"dispatch_{filtered_name}_{timestamp}.log"
     )
+
+    os.makedirs(docker_log_path, exist_ok=True)
 
     print_lock = Lock()
     file_lock = Lock()
@@ -98,5 +101,14 @@ def dispatch_container(
             # 定期检查
             log(f"当前正在运行的容器数量: {running_containers}")
             time.sleep(interval)  # 可调节时间间隔，平衡系统负载与实时性
+    log("所有容器已启动，等待处理完成...")
+    while True:
+        running_containers = int(
+            subprocess.check_output(["docker", "ps", "-q"]).decode().count("\n")
+        )
+        if running_containers == 0:
+            break
+        log(f"当前正在运行的容器数量: {running_containers}")
+        time.sleep(interval)
     log("处理完成")
     log(f"容器退出码统计: {exit_code_counter}")
