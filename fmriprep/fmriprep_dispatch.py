@@ -13,12 +13,6 @@ def get_parser():
         help="The directory where the BIDS dataset is located.",
     )
     parser.add_argument(
-        "--max-containers",
-        type=int,
-        required=True,
-        help="The maximum number of containers that can be run simultaneously.",
-    )
-    parser.add_argument(
         "--fmriprep-output-path",
         type=str,
         required=True,
@@ -42,6 +36,19 @@ def get_parser():
         type=str,
         help="the file containing the list of subject IDs to be processed.",
     )
+    # arguments for dispatching container
+    parser.add_argument(
+        "--max-containers",
+        type=int,
+        required=True,
+        help="The maximum number of containers that can be run simultaneously.",
+    )
+    parser.add_argument(
+        "--interval",
+        type=int,
+        required=True,
+        help="The interval time for checking the number of running containers.",
+    )
     # optional arguments
     path = os.path.dirname(os.path.abspath(__file__))
     parser.add_argument(
@@ -62,12 +69,6 @@ def get_parser():
         type=str,
         default=os.path.join(path, "license.txt"),
         help="The license file name for FreeSurfer.",
-    )
-    parser.add_argument(
-        "--interval",
-        type=int,
-        default=60 * 30,
-        help="The interval time for checking the number of running containers.",
     )
     return parser
 
