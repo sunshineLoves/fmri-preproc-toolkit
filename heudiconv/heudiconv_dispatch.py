@@ -156,4 +156,4 @@ def heudiconv_main():
 
 
 if __name__ == "__main__":
-    main_heudiconv()
+    heudiconv_main()
