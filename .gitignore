@@ -14,3 +14,7 @@ xcp_d/dispatch-logs/
 xcp_d/output/
 # connectome output
 connectome/output/
+# docker logs
+heudiconv/docker-logs/
+# dispatch logs
+heudiconv/dispatch-logs/
