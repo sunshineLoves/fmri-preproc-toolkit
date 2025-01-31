@@ -178,4 +178,4 @@ def fmriprep_main():
 
 
 if __name__ == "__main__":
-    main()
+    fmriprep_main()
