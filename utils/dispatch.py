@@ -32,7 +32,7 @@ def dispatch_container(
 
     def log(message):
         """打印带有时间戳的日志信息"""
-        msg = f"[{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}] {message}"
+        msg = f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {message}"
         with print_lock:
             print(msg)
         # 同时将日志信息写入文件
@@ -89,7 +89,7 @@ def dispatch_container(
                 log(f"启动新容器...")
                 log(f"参数配置 : {config}")
                 log(f"路径绑定 : {binds_dict}")
-                log(f"容器参数 : {" ".join(container_args)}")
+                log(f"容器参数 : {' '.join(container_args)}")
                 container_id = subprocess.check_output(command).decode().strip()
                 log(f"启动第 {index + 1} / {count} 个容器成功，容器 ID: {container_id}")
                 log(docker_config["msg_after_start"])
