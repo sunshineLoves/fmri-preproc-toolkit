@@ -40,7 +40,8 @@ def dispatch_container(
             with open(dispatch_log_file, "a") as f:
                 f.write(msg + "\n")
 
-    log(f"开始调度容器，容器镜像为：{image_name}，计划运行的容器个数: {len(configs)}")
+    count = len(configs)
+    log(f"开始调度容器，容器镜像为：{image_name}，计划运行的容器个数: {count}")
 
     def wait_container(container_id, docker_log_file):
         log(f"等待容器 {container_id} 退出...")
@@ -63,7 +64,7 @@ def dispatch_container(
         )
         log(f"容器 {container_id} 删除成功")
 
-    for config in configs:
+    for index, config in enumerate(configs):
         docker_config = docker_config_builder(config)
         docker_log_file = os.path.join(
             docker_log_path, docker_config["docker_log_file"]
@@ -90,7 +91,7 @@ def dispatch_container(
                 log(f"路径绑定 : {binds_dict}")
                 log(f"容器参数 : {" ".join(container_args)}")
                 container_id = subprocess.check_output(command).decode().strip()
-                log(f"启动成功，容器 ID: {container_id}")
+                log(f"启动第 {index + 1} / {count} 个容器成功，容器 ID: {container_id}")
                 log(docker_config["msg_after_start"])
                 Thread(
                     target=wait_container,

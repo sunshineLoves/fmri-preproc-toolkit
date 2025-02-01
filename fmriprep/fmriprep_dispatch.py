@@ -154,7 +154,7 @@ def fmriprep_main(argv=None):
                 "--participant_label",
                 subject_id,
                 "--nthreads",
-                "20",
+                "12",
                 "--random-seed",
                 "0",
                 "--ignore",
