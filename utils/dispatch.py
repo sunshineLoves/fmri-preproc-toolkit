@@ -43,7 +43,7 @@ def dispatch_container(
     count = len(configs)
     log(f"开始调度容器，容器镜像为：{image_name}，计划运行的容器个数: {count}")
 
-    def wait_container(container_id, docker_log_file):
+    def wait_container(container_id, index, config, docker_log_file):
         log(f"等待容器 {container_id} 退出...")
         exit_code = (
             subprocess.check_output(["docker", "wait", container_id]).decode().strip()
@@ -53,7 +53,8 @@ def dispatch_container(
                 exit_code_counter[exit_code] += 1
             else:
                 exit_code_counter[exit_code] = 1
-        log(f"容器 {container_id} 退出码为 {exit_code}，日志记录到 {docker_log_file}")
+        log(f"第 {index + 1} / {count} 个容器 {container_id} 退出码为 {exit_code}")
+        log(f"容器参数配置为 {config}，日志记录到 {docker_log_file}")
         with open(docker_log_file, "w") as f:
             subprocess.run(["docker", "logs", "-t", container_id], stdout=f, stderr=f)
         log(f"删除容器 {container_id}...")
@@ -95,7 +96,7 @@ def dispatch_container(
                 log(docker_config["msg_after_start"])
                 Thread(
                     target=wait_container,
-                    args=(container_id, docker_log_file),
+                    args=(container_id, index, config, docker_log_file),
                 ).start()
                 break
 
