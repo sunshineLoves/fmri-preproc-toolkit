@@ -133,10 +133,10 @@ def fmriprep_main(argv=None):
     validate_args(args)
     print(args)
 
-    configs = [{"subject": subject_id} for subject_id in args.subject_list]
+    configs = [{"subject_id": subject_id} for subject_id in args.subject_list]
 
     def docker_config_builder(config):
-        subject_id = config["subject"]
+        subject_id = config["subject_id"]
         return {
             "docker_log_file": f"fmriprep_{subject_id}.log",
             "binds_dict": {
