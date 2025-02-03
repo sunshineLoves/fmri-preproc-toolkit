@@ -22,7 +22,7 @@ def get_parser():
         "--xcp_d-output-path",
         type=str,
         required=True,
-        help="The directory where the xcp_d output is stored. (relative to --workspace-name)",
+        help="The directory where the xcp_d output is stored.",
     )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
