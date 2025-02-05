@@ -73,14 +73,13 @@ def get_parser():
 
 
 def validate_args(args):
-    workspace_path = os.path.join(args.toolkit_path, args.workspace_name)
     fmriprep_derivative_path = args.fmriprep_derivative_path
-    docker_log_path = os.path.join(workspace_path, args.docker_log_path)
-    dispatch_log_path = os.path.join(workspace_path, args.dispatch_log_path)
-    xcp_d_output_path = os.path.join(workspace_path, args.xcp_d_output_path)
+    # docker_log_path = os.path.join(workspace_path, args.docker_log_path)
+    # dispatch_log_path = os.path.join(workspace_path, args.dispatch_log_path)
+    xcp_d_output_path = args.xcp_d_output_path
 
-    os.makedirs(docker_log_path, exist_ok=True)
-    os.makedirs(dispatch_log_path, exist_ok=True)
+    os.makedirs(args.docker_log_path, exist_ok=True)
+    os.makedirs(args.dispatch_log_path, exist_ok=True)
     assert os.path.isdir(fmriprep_derivative_path), "fMRIPrep output not found."
     assert not os.path.exists(xcp_d_output_path) or os.path.isdir(
         xcp_d_output_path
@@ -121,12 +120,9 @@ def validate_args(args):
             os.path.join(xcp_d_output_path, f"sub-{subject_id}")
         ), f"Output directory of Subject {subject_id} already exists."
         assert not os.path.exists(
-            os.path.join(docker_log_path, f"xcp_d_{subject_id}.log")
+            os.path.join(args.docker_log_path, f"xcp_d_{subject_id}.log")
         ), f"Log file of Subject {subject_id} already exists."
 
-    args.docker_log_path = docker_log_path
-    args.dispatch_log_path = dispatch_log_path
-    args.xcp_d_output_path = xcp_d_output_path
     args.subject_list = subject_list
 
 
