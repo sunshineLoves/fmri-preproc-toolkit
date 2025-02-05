@@ -104,7 +104,9 @@ def validate_args(args):
         start, end = args.subject_range
         start_i = subject_ids.index(start)
         end_i = subject_ids.index(end)
-        assert start_i <= end_i and start_i >= 0 and end_i >= 0, "Invalid subject range."
+        assert (
+            start_i <= end_i and start_i >= 0 and end_i >= 0
+        ), "Invalid subject range."
         subject_list = subject_ids[start_i : end_i + 1]
     elif args.subject_file:
         with open(args.subject_file, "r") as f:
@@ -162,11 +164,11 @@ def xcp_d_main(argv=None):
                 "--nuisance-regressors",
                 "36P",
                 "--smoothing",
-                "3",
+                "6",
                 "--lower-bpf",
-                "0.008",
+                "0.009",
                 "--upper-bpf",
-                "0.0",
+                "0.08",
                 "--motion-filter-type",
                 "none",
                 "--head-radius",
