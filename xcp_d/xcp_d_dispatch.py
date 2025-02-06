@@ -93,12 +93,14 @@ def validate_args(args):
             ), f"Subject {subject_id} not found."
         subject_list = args.subject_list
     elif args.subject_range:
-        paths = [
-            path
-            for path in os.listdir(fmriprep_derivative_path)
-            if os.path.isdir(os.path.join(fmriprep_derivative_path, path))
-            and path.startswith("sub-")
-        ]
+        paths = sorted(
+            [
+                path
+                for path in os.listdir(fmriprep_derivative_path)
+                if os.path.isdir(os.path.join(fmriprep_derivative_path, path))
+                and path.startswith("sub-")
+            ]
+        )
         subject_ids = [path.split("-")[-1] for path in paths]
         start, end = args.subject_range
         start_i = subject_ids.index(start)
