@@ -173,6 +173,8 @@ def xcp_d_main(argv=None):
                 "auto",
                 "--fd-thresh",
                 "0.2",
+                "--min-time",
+                "0",
                 "--datasets",
                 "/bids-atlas",
                 "--atlases",
