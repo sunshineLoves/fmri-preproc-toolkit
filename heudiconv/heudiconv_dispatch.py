@@ -106,7 +106,7 @@ def heudiconv_main(argv=None):
             }
         )
 
-    def docker_config_builder(config):
+    def docker_config_action(_, config):
         subject_id = config["subject_id"]
         viscode = config["viscode"]
         fmri_images = config["fmri_images"]
@@ -151,7 +151,7 @@ def heudiconv_main(argv=None):
         max_containers=args.max_containers,
         interval=args.interval,
         configs=configs,
-        docker_config_builder=docker_config_builder,
+        docker_config_action=docker_config_action,
     )
 
 

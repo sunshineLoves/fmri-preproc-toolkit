@@ -137,7 +137,7 @@ def fmriprep_main(argv=None):
 
     configs = [{"subject_id": subject_id} for subject_id in args.subject_list]
 
-    def docker_config_builder(config):
+    def docker_config_action(_, config):
         subject_id = config["subject_id"]
         return {
             "docker_log_file": f"fmriprep_{subject_id}.log",
@@ -174,7 +174,7 @@ def fmriprep_main(argv=None):
         max_containers=args.max_containers,
         interval=args.interval,
         configs=configs,
-        docker_config_builder=docker_config_builder,
+        docker_config_action=docker_config_action,
     )
 
 

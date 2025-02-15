@@ -13,7 +13,8 @@ def dispatch_container(
     max_containers: int,
     interval: int,
     configs: List[Dict[str, str]],
-    docker_config_builder: Callable[[Dict[str, str]], Dict[str, str]],
+    docker_config_action: Callable[[str, Dict[str, str]], Dict[str, str]],
+    workdirs_path: str = None,
 ):
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     docker_log_path = os.path.join(docker_log_path, timestamp)
@@ -23,6 +24,9 @@ def dispatch_container(
     )
 
     os.makedirs(docker_log_path, exist_ok=True)
+    if workdirs_path:
+        workdirs_path = os.path.join(workdirs_path, timestamp)
+        os.makedirs(workdirs_path, exist_ok=True)
 
     print_lock = Lock()
     file_lock = Lock()
@@ -66,7 +70,7 @@ def dispatch_container(
         log(f"容器 {container_id} 删除成功")
 
     for index, config in enumerate(configs):
-        docker_config = docker_config_builder(config)
+        docker_config = docker_config_action(workdirs_path, config)
         docker_log_file = os.path.join(
             docker_log_path, docker_config["docker_log_file"]
         )
