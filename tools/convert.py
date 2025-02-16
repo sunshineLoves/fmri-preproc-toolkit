@@ -64,4 +64,4 @@ def convert_fMRIvols_to_atlas(fmri_files, atlas_file):
         else:
             print(f"File {file_name} not a nifti file. Skipping...")
 
-    return np.stack(pmTS_list, axis=0)
+    return pmTS_list
