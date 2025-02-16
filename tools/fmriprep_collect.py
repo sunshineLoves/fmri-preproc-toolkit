@@ -61,6 +61,8 @@ def get_parser():
         "--no-cache", action="store_true", help="Disable cache and regenerate all data"
     )
 
+    return parser
+
 
 def main():
     parser = get_parser()
