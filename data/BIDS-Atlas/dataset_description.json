@@ -1,0 +1,12 @@
+{
+    "DatasetType": "atlas",
+    "GeneratedBy": [
+        {
+            "CodeURL": "https://github.com/PennLINC/xcp_d/archive/0.10.1.tar.gz",
+            "Name": "xcp_d",
+            "Version": "0.10.1"
+        }
+    ],
+    "HowToAcknowledge": "Include the generated boilerplate in the methods section.",
+    "Name": "XCP-D Atlases"
+}
