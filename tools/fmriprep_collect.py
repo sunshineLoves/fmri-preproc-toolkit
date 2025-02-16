@@ -149,6 +149,8 @@ def main():
     filtered_entities = [all_entities[i] for i in valid_indices]
     filtered_data_dict = dict(zip(map(serialize, filtered_entities), filtered_data))
 
+    print(f"Filtered {len(valid_indices)} out of {len(all_data)} BOLD data")
+
     output_prefix = (
         f"atlas-{args.atlas_name}_space-MNI152NLin6Asym_res-2_"
         f"fd-{args.fd_threshold}_dvar-{args.dvar_threshold}_filtered"
