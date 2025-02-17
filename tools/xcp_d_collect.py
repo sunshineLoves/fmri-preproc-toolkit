@@ -117,6 +117,8 @@ def main():
 
     if not bold_files:
         raise ValueError("No valid BOLD files found in XCP-D directory")
+    if not time_tables:
+        raise ValueError("No valid timeseries files found in XCP-D directory")
 
     # 3. Get atlas file
     atlas_files = atlas_layout.get(
