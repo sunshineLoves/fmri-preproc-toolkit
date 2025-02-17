@@ -103,7 +103,9 @@ def main():
     atlas_file = atlas_files[0].path
 
     # 4. Cache handling
-    cache_prefix = f"atlas-{args.atlas_name}_space-MNI152NLin6Asym_res-2_full"
+    cache_prefix = (
+        f"preproc-fmriprep_atlas-{args.atlas_name}_space-MNI152NLin6Asym_res-2_full"
+    )
     bold_cache_path = os.path.join(args.output_path, f"{cache_prefix}_bold.npz")
 
     if not args.no_cache and os.path.isfile(bold_cache_path):
@@ -152,7 +154,7 @@ def main():
     print(f"Filtered {len(valid_indices)} out of {len(all_data)} BOLD data")
 
     output_prefix = (
-        f"atlas-{args.atlas_name}_space-MNI152NLin6Asym_res-2_"
+        f"preproc-fmriprep_atlas-{args.atlas_name}_space-MNI152NLin6Asym_res-2_"
         f"fd-{args.fd_threshold}_dvar-{args.dvar_threshold}_filtered"
     )
     bold_output_path = os.path.join(args.output_path, f"{output_prefix}_bold.npz")
