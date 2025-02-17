@@ -113,7 +113,7 @@ def main():
     time_tables = xcp_d_layout.get(
         space="MNI152NLin6Asym",
         segmentation=args.atlas_name,
-        stat="mean",
+        statistic="mean",
         suffix="timeseries",
         extension=".tsv",
     )
