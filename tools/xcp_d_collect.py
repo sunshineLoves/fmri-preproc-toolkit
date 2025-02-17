@@ -91,7 +91,10 @@ def main():
 
     # 1. Setup BIDS layouts
     xcp_d_layout = BIDSLayout(args.xcp_d_derivative_path)
-    xcp_d_layout.add_derivatives(args.xcp_d_derivative_path)
+    xcp_d_layout.add_derivatives(
+        args.xcp_d_derivative_path,
+        config=["bids", "derivatives", json.load(open("data/xcp_d_bids_config2.json"))],
+    )
     atlas_layout = BIDSLayout(
         args.bids_atlas_path,
         config=[json.load(open("data/atlas_bids_config.json"))],
@@ -109,7 +112,7 @@ def main():
 
     time_tables = xcp_d_layout.get(
         space="MNI152NLin6Asym",
-        seg=args.atlas_name,
+        segmentation=args.atlas_name,
         stat="mean",
         suffix="timeseries",
         extension=".tsv",
