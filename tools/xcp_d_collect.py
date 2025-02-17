@@ -150,10 +150,10 @@ def main():
         print("Loading cached data...")
         all_bold_data_dict = np.load(bold_cache_path)
         all_bold_data = list(all_bold_data_dict.values())
-        all_bold_entities = list(map(deserialize, all_bold_data.keys()))
+        all_bold_entities = list(map(deserialize, all_bold_data_dict.keys()))
         all_time_data_dict = np.load(time_cache_path)
         all_time_data = list(all_time_data_dict.values())
-        all_time_entities = list(map(deserialize, all_time_data.keys()))
+        all_time_entities = list(map(deserialize, all_time_data_dict.keys()))
     else:
         print("Processing all fMRI files...")
         fmri_paths = [f.path for f in bold_files]
