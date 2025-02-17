@@ -28,7 +28,7 @@ def quality_filter(xcp_d_layout, all_data, all_entities):
             session=entities["ses"],
             run=entities["run"],
             task="rest",
-            suffix="outliter",
+            suffix="outliers",
             extension=".tsv",
         )
         if not confounds:
