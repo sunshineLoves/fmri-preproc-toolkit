@@ -109,6 +109,7 @@ def main():
         suffix="bold",
         extension=".nii.gz",
     )
+    bold_files = list(filter(lambda f: "run" in f.entities, bold_files))
 
     time_tables = xcp_d_layout.get(
         space="MNI152NLin6Asym",
@@ -117,6 +118,7 @@ def main():
         suffix="timeseries",
         extension=".tsv",
     )
+    time_tables = list(filter(lambda t: "run" in t.entities, time_tables))
 
     if not bold_files:
         raise ValueError("No valid BOLD files found in XCP-D directory")
