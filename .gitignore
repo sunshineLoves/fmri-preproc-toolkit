@@ -18,5 +18,7 @@ connectome/output/
 heudiconv/docker-logs/
 # dispatch logs
 heudiconv/dispatch-logs/
+# tools output
+tools/output/
 # pycache
 */__pycache__/
