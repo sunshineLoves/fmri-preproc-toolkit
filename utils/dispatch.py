@@ -70,7 +70,7 @@ def dispatch_container(
         log(f"第 {index + 1} / {count} 个容器 {container_name} 退出码为 {exit_code}")
         log(f"容器参数配置为 {config}，日志记录到 {docker_log_file}")
         with open(docker_log_file, "w") as f:
-            f.write(container.logs().decode())
+            f.write(container.logs(timestamps=True).decode())
         log(f"删除容器 {container_name}...")
         container.remove()
         log(f"容器 {container_name} 删除成功")
