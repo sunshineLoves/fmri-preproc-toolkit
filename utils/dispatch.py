@@ -1,9 +1,9 @@
 import os
-import subprocess
-import time
-from threading import Thread, Lock
+import docker
 from datetime import datetime
 from typing import List, Dict, Callable
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from threading import Lock
 
 
 def dispatch_container(
@@ -11,7 +11,6 @@ def dispatch_container(
     dispatch_log_path: str,
     docker_log_path: str,
     max_containers: int,
-    interval: int,
     configs: List[Dict[str, str]],
     docker_config_action: Callable[[str, Dict[str, str]], Dict[str, str]],
     workdirs_path: str = None,
@@ -30,9 +29,6 @@ def dispatch_container(
 
     print_lock = Lock()
     file_lock = Lock()
-    counter_lock = Lock()
-
-    exit_code_counter = {}
 
     def log(message):
         """打印带有时间戳的日志信息"""
@@ -47,74 +43,61 @@ def dispatch_container(
     count = len(configs)
     log(f"开始调度容器，容器镜像为：{image_name}，计划运行的容器个数: {count}")
 
-    def wait_container(container_id, index, config, docker_log_file):
-        log(f"等待容器 {container_id} 退出...")
-        exit_code = (
-            subprocess.check_output(["docker", "wait", container_id]).decode().strip()
-        )
-        with counter_lock:
-            if exit_code in exit_code_counter:
-                exit_code_counter[exit_code] += 1
-            else:
-                exit_code_counter[exit_code] = 1
-        log(f"第 {index + 1} / {count} 个容器 {container_id} 退出码为 {exit_code}")
-        log(f"容器参数配置为 {config}，日志记录到 {docker_log_file}")
-        with open(docker_log_file, "w") as f:
-            subprocess.run(["docker", "logs", "-t", container_id], stdout=f, stderr=f)
-        log(f"删除容器 {container_id}...")
-        subprocess.check_call(
-            ["docker", "rm", container_id],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-        log(f"容器 {container_id} 删除成功")
-
-    for index, config in enumerate(configs):
+    def run_container(index, config, docker_log_file):
+        client = docker.from_env()
         docker_config = docker_config_action(workdirs_path, config)
         docker_log_file = os.path.join(
             docker_log_path, docker_config["docker_log_file"]
         )
         binds_dict = docker_config["binds_dict"]
-        bind_args = []
-        for src, dst in binds_dict.items():
-            bind_args.extend(["-v", f"{src}:{dst}"])
+        bind_args = [f"{src}:{dst}" for src, dst in binds_dict.items()]
         container_args = docker_config["container_args"]
-        command = ["docker", "run", "-d", *bind_args, image_name, *container_args]
-
-        """监控容器数量并启动新容器"""
-        while True:
-            # 获取当前运行的容器数量
-            running_containers = int(
-                subprocess.check_output(["docker", "ps", "-q"]).decode().count("\n")
-            )
-
-            # 如果容器数量少于最大容器数，则启动新的容器
-            if running_containers < max_containers:
-                # 启动容器
-                log(f"启动新容器...")
-                log(f"参数配置 : {config}")
-                log(f"路径绑定 : {binds_dict}")
-                log(f"容器参数 : {' '.join(container_args)}")
-                container_id = subprocess.check_output(command).decode().strip()
-                log(f"启动第 {index + 1} / {count} 个容器成功，容器 ID: {container_id}")
-                log(docker_config["msg_after_start"])
-                Thread(
-                    target=wait_container,
-                    args=(container_id, index, config, docker_log_file),
-                ).start()
-                break
-
-            # 定期检查
-            log(f"当前正在运行的容器数量: {running_containers}")
-            time.sleep(interval)  # 可调节时间间隔，平衡系统负载与实时性
-    log("所有容器已启动，等待处理完成...")
-    while True:
-        running_containers = int(
-            subprocess.check_output(["docker", "ps", "-q"]).decode().count("\n")
+        log(f"开始启动第 {index + 1} / {count} 个容器...")
+        log(f"参数配置 : {config}")
+        log(f"路径绑定 : {binds_dict}")
+        log(f"容器参数 : {' '.join(container_args)}")
+        container = client.containers.run(
+            image=image_name,
+            detach=True,
+            volumes=bind_args,
+            command=container_args,
         )
-        if running_containers == 0:
-            break
-        log(f"当前正在运行的容器数量: {running_containers}")
-        time.sleep(interval)
+        container_name = container.name
+        log(f"启动第 {index + 1} / {count} 个容器成功，容器名称: {container_name}")
+        log(docker_config["msg_after_start"])
+        log(f"等待容器 {container_name} 退出...")
+        exit_code = container.wait()["StatusCode"]
+        log(f"第 {index + 1} / {count} 个容器 {container_name} 退出码为 {exit_code}")
+        log(f"容器参数配置为 {config}，日志记录到 {docker_log_file}")
+        with open(docker_log_file, "w") as f:
+            f.write(container.logs().decode())
+        log(f"删除容器 {container_name}...")
+        container.remove()
+        log(f"容器 {container_name} 删除成功")
+        return exit_code
+
+    exit_code_counter = {}
+    exit_code_infos = []
+    with ThreadPoolExecutor(max_workers=max_containers) as executor:
+        futures = {
+            executor.submit(run_container, index, config, docker_log_path): index
+            for index, config in enumerate(configs)
+        }
+        log("所有容器已提交，等待处理完成...")
+        for future in as_completed(futures):
+            # 获取完成的任务的结果
+            index = futures[future]
+            config = configs[index]
+            try:
+                exit_code = future.result()  # 任务的返回值
+                exit_code_infos.append({"config": config, "exit_code": exit_code})
+                if exit_code in exit_code_counter:
+                    exit_code_counter[exit_code] += 1
+                else:
+                    exit_code_counter[exit_code] = 1
+            except Exception as exc:
+                log(f"第 {index + 1} / {count} 个容器 {config} 处理出现异常: {exc}")
+
     log("处理完成")
+    log(f"容器退出码信息: {exit_code_infos}")
     log(f"容器退出码统计: {exit_code_counter}")
