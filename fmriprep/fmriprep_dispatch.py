@@ -43,12 +43,6 @@ def get_parser():
         required=True,
         help="The maximum number of containers that can be run simultaneously.",
     )
-    parser.add_argument(
-        "--interval",
-        type=int,
-        required=True,
-        help="The interval time for checking the number of running containers.",
-    )
     # optional arguments
     path = os.path.dirname(os.path.abspath(__file__))
     parser.add_argument(
@@ -172,7 +166,6 @@ def fmriprep_main(argv=None):
         dispatch_log_path=args.dispatch_log_path,
         docker_log_path=args.docker_log_path,
         max_containers=args.max_containers,
-        interval=args.interval,
         configs=configs,
         docker_config_action=docker_config_action,
     )
