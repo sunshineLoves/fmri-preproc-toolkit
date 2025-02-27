@@ -65,7 +65,7 @@ def infotodict(
         * series_description
         * image_type
         """
-        if s.series_description == "MPRAGE":
+        if "MPRAGE" in s.series_description:
             info[t1w].append(s.series_id)
         else:
             info[func_rest].append(s.series_id)
