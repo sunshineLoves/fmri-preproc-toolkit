@@ -27,18 +27,17 @@ def dispatch_container(
         workdirs_path = os.path.join(workdirs_path, timestamp)
         os.makedirs(workdirs_path, exist_ok=True)
 
-    print_lock = Lock()
-    file_lock = Lock()
+    log_lock = Lock()
 
-    def log(message):
+    def log(*args):
         """打印带有时间戳的日志信息"""
-        msg = f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {message}"
-        with print_lock:
-            print(msg)
-        # 同时将日志信息写入文件
-        with file_lock:
-            with open(dispatch_log_file, "a") as f:
-                f.write(msg + "\n")
+        with log_lock:
+            for msg in args:
+                format_msg = f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {msg}"
+                print(format_msg)
+                # 同时将日志信息写入文件
+                with open(dispatch_log_file, "a") as f:
+                    f.write(format_msg + "\n")
 
     count = len(configs)
     log(f"开始调度容器，容器镜像为：{image_name}，计划运行的容器个数: {count}")
@@ -52,10 +51,12 @@ def dispatch_container(
         binds_dict = docker_config["binds_dict"]
         bind_args = [f"{src}:{dst}" for src, dst in binds_dict.items()]
         container_args = docker_config["container_args"]
-        log(f"开始启动第 {index + 1} / {count} 个容器...")
-        log(f"参数配置 : {config}")
-        log(f"路径绑定 : {binds_dict}")
-        log(f"容器参数 : {' '.join(container_args)}")
+        log(
+            f"开始启动第 {index + 1} / {count} 个容器...",
+            f"参数配置 : {config}",
+            f"路径绑定 : {binds_dict}",
+            f"容器参数 : {' '.join(container_args)}",
+        )
         container = client.containers.run(
             image=image_name,
             detach=True,
@@ -63,12 +64,16 @@ def dispatch_container(
             command=container_args,
         )
         container_name = container.name
-        log(f"启动第 {index + 1} / {count} 个容器成功，容器名称: {container_name}")
-        log(docker_config["msg_after_start"])
-        log(f"等待容器 {container_name} 退出...")
+        log(
+            f"启动第 {index + 1} / {count} 个容器成功，容器名称: {container_name}",
+            docker_config["msg_after_start"],
+            f"等待容器 {container_name} 退出...",
+        )
         exit_code = container.wait()["StatusCode"]
-        log(f"第 {index + 1} / {count} 个容器 {container_name} 退出码为 {exit_code}")
-        log(f"容器参数配置为 {config}，日志记录到 {docker_log_file}")
+        log(
+            f"第 {index + 1} / {count} 个容器 {container_name} 退出码为 {exit_code}",
+            f"容器参数配置为 {config}，日志记录到 {docker_log_file}",
+        )
         with open(docker_log_file, "w") as f:
             f.write(container.logs(timestamps=True).decode())
         log(f"删除容器 {container_name}...")
@@ -98,6 +103,8 @@ def dispatch_container(
             except Exception as exc:
                 log(f"第 {index + 1} / {count} 个容器 {config} 处理出现异常: {exc}")
 
-    log("处理完成")
-    log(f"容器退出码信息: {exit_code_infos}")
-    log(f"容器退出码统计: {exit_code_counter}")
+    log(
+        "处理完成",
+        f"容器退出码信息: {exit_code_infos}",
+        f"容器退出码统计: {exit_code_counter}",
+    )
