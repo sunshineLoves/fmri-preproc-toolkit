@@ -27,6 +27,12 @@ def get_parser():
         required=True,
         help="The CSV file containing the image information.",
     )
+    parser.add_argument(
+        "--heuristic-file",
+        type=str,
+        required=True,
+        help="The heuristic file for heudiconv.",
+    )
     # arguments for dispatching container
     parser.add_argument(
         "--max-containers",
@@ -36,12 +42,6 @@ def get_parser():
     )
     # optional arguments
     path = os.path.dirname(os.path.abspath(__file__))
-    parser.add_argument(
-        "--heuristic-file",
-        type=str,
-        default=os.path.join(path, "heuristic.py"),
-        help="The heuristic file for heudiconv.",
-    )
     parser.add_argument(
         "--docker-log-path",
         type=str,
