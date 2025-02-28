@@ -70,7 +70,9 @@ def validate_args(args):
 
 
 def get_binds_dict(adni_raw_path, prefix, image_ids):
-    find_image_path = lambda ID: glob(f"{adni_raw_path}\\*\\*\\*\\I{ID}")[0]
+    find_image_path = lambda ID: glob(
+        os.path.join(adni_raw_path, "*", "*", "*", f"I{ID}")
+    )[0]
     get_bind_path = lambda ID: f"{prefix}/I{ID}"
     return dict(zip(map(find_image_path, image_ids), map(get_bind_path, image_ids)))
 
