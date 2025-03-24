@@ -139,7 +139,7 @@ def main():
 
     # 4. Cache handling
     cache_prefix = (
-        f"preproc-xcpd_atlas-{args.atlas_name}_space-MNI152NLin6Asym_res-2_full"
+        f"preproc-xcpd_atlas-{args.atlas_name}_space-MNI152NLin6Asym_res-2_desc-full"
     )
     bold_cache_path = os.path.join(args.output_path, f"{cache_prefix}_bold.npz")
     time_cache_path = os.path.join(args.output_path, f"{cache_prefix}_time.npz")
@@ -186,7 +186,7 @@ def main():
     filtered_time_count = len(filtered_time_data_dict.keys())
     print(f"Filtered {filtered_time_count} out of {len(all_time_data)} TIME data")
 
-    output_prefix = f"preproc-xcpd_atlas-{args.atlas_name}_space-MNI152NLin6Asym_res-2_fd-0.2_filtered"
+    output_prefix = f"preproc-xcpd_atlas-{args.atlas_name}_space-MNI152NLin6Asym_res-2_fd-0.2_desc-filtered"
     bold_output_path = os.path.join(args.output_path, f"{output_prefix}_bold.npz")
     time_output_path = os.path.join(args.output_path, f"{output_prefix}_time.npz")
     np.savez_compressed(bold_output_path, **filtered_bold_data_dict)
